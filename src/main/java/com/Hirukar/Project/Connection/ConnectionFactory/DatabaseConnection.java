@@ -1,5 +1,7 @@
 package com.Hirukar.Project.Connection.ConnectionFactory;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -7,14 +9,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public final class DatabaseConnection {
-    private final static String HOST = "localhost";
-    private final static int PORT=3306;
-    private final static String DATABASE = "sap";
-    private final static String DRIVER = "com.mysql.cj.jdbc.Driver";
-    private final static String URL = "jdbc:mysql://"+HOST+":"+PORT+"/"+DATABASE+"?useTimezone=true&serverTimezone=UTC";
-    private final static String USER = "root";
-    private final static String PASS = "";
-    
+    private final String HOST;
+    private final int PORT;
+    private final String DATABASE ;
+    private final String DRIVER = "com.mysql.cj.jdbc.Driver";
+    private final String URL;
+    private final String USER;
+    private final String PASS;
+
     private static DatabaseConnection instance;
      
     public static DatabaseConnection getInstance(){
@@ -23,28 +25,73 @@ public final class DatabaseConnection {
         return instance;
     }
 
-    private DatabaseConnection() {}
-    
-    public Connection getConnection() throws ClassNotFoundException, SQLException {
-        Class.forName(DRIVER);
-        return DriverManager.getConnection(URL, USER, PASS);
+    private DatabaseConnection() {
+        Dotenv env = Dotenv.load();
+        this.HOST = env.get("DB_HOST");
+        this.PORT = Integer.parseInt(env.get("DB_PORT"));
+        this.DATABASE = env.get("DB_DATABASE");
+        this.USER = env.get("DB_USER");
+        this.PASS = env.get("DB_PASS");
+        this.URL = "jdbc:mysql://" + this.HOST + ":" + this.PORT + "/" + this.DATABASE + "?useTimezone=true&serverTimezone=UTC";
     }
 
-    public void close(Connection CON) throws SQLException {
+    private Connection getConnection() throws ClassNotFoundException, SQLException {
+        Class.forName(DRIVER);
+        return DriverManager.getConnection(this.URL, this.USER, this.PASS);
+    }
+
+    private void close(Connection CON) throws SQLException {
         if (CON != null) 
             CON.close();
     }
 
-    public void close(Connection CON,PreparedStatement stmt) throws SQLException {
+    private void close(Connection CON,PreparedStatement stmt) throws SQLException {
         if (stmt != null)
             stmt.close();
         close(CON);
     }
 
-    public void close(Connection CON,ResultSet rs, PreparedStatement stmt) throws SQLException {
+    private void close(Connection CON,ResultSet rs, PreparedStatement stmt) throws SQLException {
         if (rs != null)
             rs.close();
         close(CON,stmt);
+    }
+
+    public void connect(String sql, Object[] params, IConnectionCallback callback) throws ClassNotFoundException, SQLException {
+        Connection con = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try{
+            con = getConnection();
+            stmt = con.prepareStatement(sql);
+            if(params != null)
+                for(int i=0; i< params.length; i++)
+                    bind(i+1,stmt,params[i]);
+            rs = stmt.executeQuery();
+            if(callback != null){
+                if(rs.next())
+                    callback.callback(rs);
+                else
+                    throw new SQLException("nada encontrado");
+            }
+        }catch(ClassNotFoundException | SQLException e){
+            throw e;
+        }finally{
+            close(con,rs,stmt);
+        }
+    }
+
+    private void bind(int i, PreparedStatement stmt, Object obj) throws SQLException{
+        switch(obj.getClass().toString()){
+            case "class java.lang.Integer":
+                stmt.setInt(i, (int) obj);
+                break;
+            case "class java.lang.Double":
+                stmt.setDouble(i, (double) obj);
+                break;
+            case "class java.lang.String":
+                stmt.setString(i, obj.toString());
+        }
     }
 
 }

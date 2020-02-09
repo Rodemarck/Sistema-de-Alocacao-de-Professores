@@ -7,10 +7,10 @@ package com.Hirukar.Project.Models.Beans;
 
 import com.Hirukar.Project.Connection.DAO.DisciplinasDAO;
 import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.SQLException;/*
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.List;*/
 
 /**
  *
@@ -31,7 +31,7 @@ public class Slotss {
             this.slots[x].setUsado(false);
         }
 
-        this.horaAulas = DisciplinasDAO.getHorariosAula(id);
+        //this.horaAulas = DisciplinasDAO.getHorariosAula(id);
         for(HoraAula h : this.horaAulas){
             int x = h.getHora_inicio();
             slots[x-7].getDias()[h.getDiasDaSemana().getValue()] = h.getNumero();

@@ -46,6 +46,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
             .authorizeRequests()
                 .antMatchers(ARTEFATOS)
                     .permitAll()
+                .antMatchers(
+                        "/"
+                ).permitAll()
+                .antMatchers(
+                        "/menuSupervisor",
+                        "/disciplinas"
+                ).hasAnyAuthority(TipoUsuario.SUPERVISOR.name())
                 /*.antMatchers(
                         "/alocarProfessor",
                         "/cadastroDisciplina",

@@ -36,7 +36,7 @@ public class Periodo {
         this.nPeriodo = rs.getInt("periodo.n_periodo");
         this.curso = Cursos.getCurso(rs.getInt("periodo.FK_ID_curso"));
         this.slot = DisciplinasDAO.getSlots(rs.getInt("periodo.FK_ID_slot"));
-        this.horarioDisciplinas = DisciplinasDAO.getHorarioDisciplinas(this.curso.getValue(), nPeriodo);
+        //this.horarioDisciplinas = DisciplinasDAO.getHorarioDisciplinas(this.curso.getValue(), nPeriodo);
         this.anoLetivo = rs.getInt("periodo.ano_letivo");
     }
     

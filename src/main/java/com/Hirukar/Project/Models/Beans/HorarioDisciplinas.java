@@ -6,7 +6,6 @@
 package com.Hirukar.Project.Models.Beans;
 
 import com.Hirukar.Project.Connection.DAO.DisciplinasDAO;
-import com.Hirukar.Project.Models.Enums.DiasDaSemana;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 

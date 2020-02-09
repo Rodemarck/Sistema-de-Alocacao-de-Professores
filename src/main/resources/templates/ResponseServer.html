@@ -16,6 +16,7 @@
     <body>
     <div id="corpo">    
         <!--tabela editavel (arrasta e sota) refente a discplinas-->
+        <!--
         <div class="view-disciplina" id="div-disciplinas">
             <script th:inline="javascript">
                 /*<![CDATA[*/
@@ -28,13 +29,11 @@
             <div id="navegacao-disciplina">
                 <span id="curso" class="dadosTabela" th:text="'Curso:'"></span>
                 <select id="todos-cursos">
-                    <option value="1" onclick="mudaCurso(1)">BCC</option>
-                    <option value="2" onclick="mudaCurso(2)">BSI</option>
-                    <option value="3" onclick="mudaCurso(3)">LC</option>
+                    <option th:each="c : ${cursos}" th:value="${c.id}" th:text="${c.nome}" th:onclick="'mudaCurso(' + c.id + ');'"></option>
                 </select>
                 <span id="periodo" class="dadosTabela" th:text="'Período:'" ></span>
                 <select id="todos-periodos">
-                    <option th:each="i : ${p}" th:value="${i}" th:text="${i}" th:selected="${i==h.nPeriodo}" th:onclick="'mudaPeriodo(\''+${i}+'\');'"></option>
+                    <option th:each="i : ${periodos}" th:value="${i}" th:text="${i}" th:selected="${i==h.nPeriodo}" th:onclick="'mudaPeriodo(\''+${i}+'\');'"></option>
                 </select>
 
             </div>
@@ -55,7 +54,36 @@
                 </div>
             </div>
         </div>
-        <div id="mensagens">
+    -->
+        <section id="disciplina">
+            <div class="container-fluid view-disciplina" id="div-disciplinas">
+                <div class="row" >
+                    <div id="container-disciplinas">
+                        <div class="col-md-2">
+                            <div class="ml-0 container-horarios">
+                                <div class="mt-2 mb-3 ml-2 horario" th:each="periodo : ${periodos}">
+                                    <span class="span-center" th:text="${periodo}"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="container-fluid" id="horarios">
+                                <div class="row" th:each="periodo : ${periodos}">
+                                    <div th:each="dia : ${diasSemana}" th:id="'div-x' + diasStat.index + 'y' + periodoStat.index" class="col-md-2 ml-3 mt-2 mb-2 p-0 espaco-disciplina" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                        <div class="disciplina" ondblclick="dblclickDisicplina(event)" th:id="'el-x' + diasStat.index + 'y' + periodoStat.index" draggable="true" ondragstart="drag(event)">
+                                            <div class="ml-2" th:id="'space-x' + diasStat.index + 'y' + periodoStat.index">
+                                                <span class="text ml-1 span-center" th:id="'span--x' + diasStat.index + 'y' + periodoStat.index">-- --</span><br>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+            <div id="mensagens">
             <!-- modal dsicplina-->
             <div class="modal fade" id="modal-disciplina" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg" role="document">

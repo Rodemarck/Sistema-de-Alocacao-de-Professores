@@ -1,22 +1,64 @@
-/*
-    * To change this license header, choose License Headers in Project Properties.
-    * To change this template file, choose Tools | Templates
-        * and open the template in the editor.
- */
 package com.Hirukar.Project.Models.Beans;
 
 import com.Hirukar.Project.Connection.DAO.DisciplinasDAO;
-import com.Hirukar.Project.Models.Enums.DiasDaSemana;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 /**
  *
  * @author RODEMARCK
  */
+import java.util.List;
 public class Slots {
+    private final int id;
+    private String nome;
+    private List<SubSlot> subSlots;
+    private List<Espaco> espacos;
+
+    public Slots(ResultSet rs) throws SQLException, ClassNotFoundException {
+        this.id = rs.getInt("id");
+        this.nome = rs.getString("nome");
+        this.subSlots = DisciplinasDAO.listarSubSlot(id);
+        this.espacos = DisciplinasDAO.listarEspaco(id);
+    }
+    /**
+     * @return the espacos
+     */
+    public List<Espaco> getEspacos() {
+        return espacos;
+    }
+
+    /**
+     * @return the subSlots
+     */
+    public List<SubSlot> getSubSlots() {
+        return subSlots;
+    }
+
+    /**
+     * @return the nome
+     */
+    public String getNome() {
+        return nome;
+    }
+
+    /**
+     * @return the id
+     */
+    public int getId() {
+        return id;
+    }
+
+    public Disciplina getDisciplina(int numero) {
+        for(Espaco e : espacos)
+            if(e.getNumero() == numero)
+                return e.getDisciplina();
+        return null;        
+    }
+    
+
+    
 /*
     private int ID;
     private ArrayList<HorarioDisciplinas> horariosDisciplinas;

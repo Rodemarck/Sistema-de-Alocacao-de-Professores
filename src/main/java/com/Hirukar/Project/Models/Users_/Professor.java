@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Professor implements Serializable{
+    private final static long serialVersionUID = -1;
     private String CPF;
     private String nome;
     private Area area;

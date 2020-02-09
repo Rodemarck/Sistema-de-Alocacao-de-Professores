@@ -5,6 +5,7 @@
  */
 package com.Hirukar.Project.Controller;
 
+import com.Hirukar.Project.Connection.DAO.AlocacaoDAO;
 import com.Hirukar.Project.Connection.DAO.DisciplinasDAO;
 import com.Hirukar.Project.Connection.DAO.ProfessorDAO;
 import com.Hirukar.Project.Models.Beans.Disciplina;
@@ -13,9 +14,11 @@ import com.Hirukar.Project.Models.Beans.Periodo;
 import com.Hirukar.Project.Models.Enums.Area;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
-import com.Hirukar.Project.Models.Enums.Cursos;
 import com.Hirukar.Project.Models.Users_.Professor;
+import com.Hirukar.Project.Models.constantes.Constantes;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -30,33 +33,36 @@ import org.springframework.web.servlet.ModelAndView;
  * @author RODEMARCK
  */
 @Controller
-public class  DisciplinaController {
-    static boolean esq = true,dir = true;
-    
+public class DisciplinaController {
+    static boolean esq = true, dir = true;
+
     public Periodo[] init() throws SQLException, ClassNotFoundException {
         Periodo horarios[] = new Periodo[5];
-        for(Periodo h : horarios)
-            h = new Periodo();
-        
+
         return horarios;
     }
+
     @RequestMapping("/disciplinas")
     public ModelAndView disciplinas() throws IllegalAccessException, SQLException, ClassNotFoundException {
         ModelAndView mv = new ModelAndView("disciplinas");
         return mv;
     }
-    
-    @RequestMapping(value="/atualizarSlots", method = RequestMethod.GET, produces = {MimeTypeUtils.TEXT_PLAIN_VALUE})
-    public String atualizarSlots(int idCurso, int nPeriodo, ModelMap map) throws IllegalAccessException,SQLException, ClassNotFoundException {
+
+    @RequestMapping(value = "/atualizarSlots", method = RequestMethod.GET, produces = {
+            MimeTypeUtils.TEXT_PLAIN_VALUE })
+    public String atualizarSlots(int idCurso, int nPeriodo, ModelMap map)
+            throws IllegalAccessException, SQLException, ClassNotFoundException {
         Periodo h = DisciplinasDAO.getPeriodo(idCurso, nPeriodo);
-        ArrayList<Integer> p = DisciplinasDAO.listarPeriodos(1);
+        ArrayList<Integer> p = DisciplinasDAO.listarPeriodos();
         System.out.println("hm...");
-        ArrayList<Professor> profesores = new ArrayList<>();
-        try{
-        profesores = ProfessorDAO.listarProfessoresAptos(20191);
-        }catch(ClassNotFoundException | SQLException e){e.printStackTrace();}
+        LinkedList<Professor> profesores = new LinkedList<>();
+        try {
+            profesores = ProfessorDAO.listarProfessoresAptos(20191);
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
         System.out.println("é aqui????");
-        ArrayList<Disciplina> disciplinas = DisciplinasDAO.listar();
+        LinkedList<Disciplina> disciplinas = DisciplinasDAO.listar();
         ArrayList<Professor> profesoresARC = new ArrayList<>();
         ArrayList<Professor> profesoresFC = new ArrayList<>();
         ArrayList<Professor> profesoresENSISO = new ArrayList<>();
@@ -78,6 +84,9 @@ public class  DisciplinaController {
         map.addAttribute("prof_ENSISO",profesoresENSISO);
         map.addAttribute("disciplinas",disciplinas);
         map.addAttribute("p", p);
+        map.addAttribute("periodos",Constantes.periodos);
+        map.addAttribute("diasSemana",Constantes.diasDaSemana);
+        map.addAttribute("lista",new int[]{1,2,3,4,5,6});
         return "ResponseServer :: #corpo";
     }
     
@@ -92,12 +101,9 @@ public class  DisciplinaController {
     }
     
     @RequestMapping(value = "/alterarSlots", method = RequestMethod.POST, produces = {MimeTypeUtils.TEXT_PLAIN_VALUE})
-    public ResponseEntity<String> alterarSlots(int idCurso, int nPeriodo, int n1,int n2) {
+    public ResponseEntity<String> alterarSlots( int nPeriodo, int n1,int n2) {
         try{
-            int idN1 = DisciplinasDAO.getIdHorarioDisciplina(idCurso,nPeriodo,n1);
-            int idN2 = DisciplinasDAO.getIdHorarioDisciplina(idCurso,nPeriodo,n2);
-            DisciplinasDAO.atualizaSlots(idN1,n2);
-            DisciplinasDAO.atualizaSlots(idN2,n1);
+            DisciplinasDAO.trocaDisciplina(nPeriodo,n1,n2);
             return new ResponseEntity<>("OK",HttpStatus.OK);
         }catch(Exception e){
             System.out.println(e.getMessage());
@@ -106,10 +112,9 @@ public class  DisciplinaController {
     }
     
     @RequestMapping(value = "/trocarDiscplina" , method = RequestMethod.POST, produces = {MimeTypeUtils.TEXT_PLAIN_VALUE})
-    public ResponseEntity<String> salvar(int idCurso, int nPeriodo, int numero, int IDNovaDisciplina){
+    public ResponseEntity<String> salvar(int idPeriodo, int n1, int n2){
         try{
-            int idHorario = DisciplinasDAO.getIdHorarioDisciplina(idCurso, nPeriodo, numero);
-            DisciplinasDAO.trocaDisciplina(idHorario, IDNovaDisciplina);
+            DisciplinasDAO.trocaDisciplina(idPeriodo, n1,n2);
             return new ResponseEntity<>("OK",HttpStatus.OK);
         }catch(Exception e){
             System.out.println(e.getMessage());
