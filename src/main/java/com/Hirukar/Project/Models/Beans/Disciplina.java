@@ -17,12 +17,12 @@ import java.util.Objects;
  * @author RODEMARCK
  */
 public class Disciplina {
-    private int ID;
+    private int id;
     private String nome;
     private String codigo;
     private TipoDisciplina tipo;
     private Area area;
-    List<Disciplina> preRequisito;
+    List<Disciplina> prerequisito;
     
     public boolean remover(int n){
         return this.area == Area.getArea(n);
@@ -35,7 +35,7 @@ public class Disciplina {
         this.codigo = rs.getString("disciplina.Codigo");
         this.tipo = TipoDisciplina.valueOf(rs.getString("disciplina.Tipo").toUpperCase());
         this.area = Area.valueOf(rs.getString("disciplina.Area").toUpperCase());
-        this.ID = rs.getInt("disciplina.ID");
+        this.id = rs.getInt("disciplina.ID");
     }
     
     
@@ -82,20 +82,20 @@ public class Disciplina {
     }
 
 
-    public List<Disciplina> getPreRequisito() {
-        return preRequisito;
+    public List<Disciplina> getPrerequisito() {
+        return prerequisito;
     }
 
-    public void setPreRequisito(List<Disciplina> preRequisito) {
-        this.preRequisito = preRequisito;
+    public void setPrerequisito(List<Disciplina> prerequisito) {
+        this.prerequisito = prerequisito;
     }
 
-    public int getID() {
-        return ID;
+    public int getId() {
+        return id;
     }
     
     public void serID(int ID){
-        this.ID = ID;
+        this.id = ID;
     }
 
     @Override
@@ -116,7 +116,7 @@ public class Disciplina {
             return false;
         }
         final Disciplina other = (Disciplina) obj;
-        if (this.ID != other.ID) {
+        if (this.id != other.id) {
             return false;
         }
         if (!Objects.equals(this.nome, other.nome)) {
@@ -127,5 +127,17 @@ public class Disciplina {
         }
         return true;
     }
-    
+
+
+    @Override
+    public String toString() {
+        return "Disciplina{" +
+                "ID=" + id +
+                ", nome='" + nome + '\'' +
+                ", codigo='" + codigo + '\'' +
+                ", tipo=" + tipo +
+                ", area=" + area +
+                ", preRequisito=" + prerequisito +
+                '}';
+    }
 }

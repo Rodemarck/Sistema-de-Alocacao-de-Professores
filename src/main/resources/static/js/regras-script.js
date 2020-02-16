@@ -1,28 +1,19 @@
-var condicao = false;
+const divs = [
+    document.getElementById('tempPref'),
+    document.getElementById('numPref'),
+    document.getElementById('horMaxMin'),
+    document.getElementById('qtdCad'),
+    document.getElementById('extras')
+];
+const limpa = () => divs.forEach(el=>el.style.display = 'none');
+const caso = {
+    '1':()=>divs[0].style.display = 'block',
+    '2':()=>divs[1].style.display = 'block',
+    '3':()=>divs[2].style.display = 'block',
+    '4':()=>divs[3].style.display = 'block',
+    '5':()=>divs[4].style.display = 'block'
+}
 function mostrarForm (valor) {
-    if (condicao == true) {
-        document.getElementById('tempPref').style.display = 'none';
-        document.getElementById('numPref').style.display = 'none';
-        document.getElementById('horMaxMin').style.display = 'none';
-        document.getElementById('qtdCad').style.display = 'none';
-        condicao = false;
-    }
-    switch (valor){
-        case '1':
-            document.getElementById('tempPref').style.display = 'block';
-            condicao = true;
-            break;
-        case '2':
-            document.getElementById('numPref').style.display = 'block';
-            condicao = true;
-            break;
-        case '3':
-            document.getElementById('horMaxMin').style.display = 'block';
-            condicao = true;
-            break;
-        case '4':
-            document.getElementById('qtdCad').style.display = 'block';
-            condicao = true;
-            break;
-    }
+    limpa();
+    caso[valor]();
 }

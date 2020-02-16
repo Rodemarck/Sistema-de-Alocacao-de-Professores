@@ -58,6 +58,7 @@ public final class DatabaseConnection {
     }
 
     public void connect(String sql, Object[] params, IConnectionCallback callback) throws ClassNotFoundException, SQLException {
+        long time = System.currentTimeMillis();
         Connection con = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -67,6 +68,7 @@ public final class DatabaseConnection {
             if(params != null)
                 for(int i=0; i< params.length; i++)
                     bind(i+1,stmt,params[i]);
+
             rs = stmt.executeQuery();
             if(callback != null){
                 if(rs.next())
@@ -78,20 +80,17 @@ public final class DatabaseConnection {
             throw e;
         }finally{
             close(con,rs,stmt);
+            System.out.println("tempo de conexão =" + (System.currentTimeMillis()-time) + "ms");
         }
     }
 
-    private void bind(int i, PreparedStatement stmt, Object obj) throws SQLException{
-        switch(obj.getClass().toString()){
-            case "class java.lang.Integer":
-                stmt.setInt(i, (int) obj);
-                break;
-            case "class java.lang.Double":
-                stmt.setDouble(i, (double) obj);
-                break;
-            case "class java.lang.String":
-                stmt.setString(i, obj.toString());
-        }
+    private void bind(int i, PreparedStatement stmt, Object obj) throws SQLException {
+        Class<?> var = obj.getClass();
+        if (int.class.equals(var))
+            stmt.setInt(i, (int) obj);
+        else if (double.class.equals(var))
+            stmt.setDouble(i, (double) obj);
+        else if (String.class.equals(var))
+            stmt.setString(i, obj.toString());
     }
-
 }

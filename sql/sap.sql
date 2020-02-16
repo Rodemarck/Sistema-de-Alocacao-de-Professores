@@ -6,8 +6,6 @@
 -- Generation Time: Jul 10, 2019 at 12:12 PM
 -- Server version: 5.7.24
 -- PHP Version: 7.2.14
-create DATABASE sap;
-use sap;
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
 START TRANSACTION;
@@ -22,7 +20,9 @@ SET time_zone = "+00:00";
 --
 -- Database: `sap`
 --
-
+drop database if exists sap;
+create database sap;
+use sap;
 -- --------------------------------------------------------
 
 --

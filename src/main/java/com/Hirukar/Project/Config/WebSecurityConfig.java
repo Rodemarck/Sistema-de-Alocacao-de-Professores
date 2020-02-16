@@ -6,13 +6,13 @@
 package com.Hirukar.Project.Config;
 
 import com.Hirukar.Project.Models.Enums.TipoUsuario;
-import com.Hirukar.Project.Models.Users_.Detalhes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
@@ -47,39 +47,40 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
                 .antMatchers(ARTEFATOS)
                     .permitAll()
                 .antMatchers(
-                        "/"
-                ).permitAll()
+                        "/",
+                        "/sobre"
+                )
+                    .permitAll()
+                        .antMatchers(
+                        "/professor",
+                        "/listaPreferencias"
+                )
+                    .hasAuthority(TipoUsuario.PROFESSOR.name())
+                .antMatchers(
+                        "/coordenador",
+                        "regras"
+                )
+                    .hasAuthority(TipoUsuario.COORDENADOR.name())
                 .antMatchers(
                         "/menuSupervisor",
                         "/disciplinas"
-                ).hasAnyAuthority(TipoUsuario.SUPERVISOR.name())
-                /*.antMatchers(
-                        "/alocarProfessor",
-                        "/cadastroDisciplina",
-                        "/preferencias",
-                        "/disciplinas",
-                        "/atualizarSlots",
-                        "/getModalDisciplina",
-                        "/getBotaoNavegacaoDisciplina",
-                        "/alterarSlots",
-                        "/historicoAlocacao",
-                        "/listaPreferencias",
-                        "/menuCoordenador",
-                        "/menuProfessor",
-                        "/menuSupervisor",
-                        "/regras",
-                        "/variavel/professores",
-                        "/variavel/disciplinas",
-                        "/verificarAlocacoes")
-                    .authenticated()
-                .antMatchers("/listaPreferencias","/historicoAlocacao")
-                    .hasAnyRole(TipoUsuario.PROFESSOR.name())*/
-                .antMatchers("/cadastroProfessor","/sobre")
-                    .permitAll()
+                )
+                    .hasAnyAuthority(TipoUsuario.SUPERVISOR.name())
+                .antMatchers(
+                        "/",
+                        "/cadastroProfessor"
+                )
+                    .anonymous()
             .and()
             .formLogin()
                 .loginPage("/")
                     .permitAll()
+                        .successHandler(new LoginHandler())
+                        .failureHandler(new LoginHandler())
+            .and()
+            .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                .invalidSessionUrl("/")
             .and()
             .logout()
                 .permitAll()

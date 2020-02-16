@@ -5,7 +5,6 @@
  */
 package com.Hirukar.Project.Models.Beans;
 
-import com.Hirukar.Project.Connection.DAO.DisciplinasDAO;
 import java.sql.ResultSet;
 import java.sql.SQLException;/*
 import java.util.ArrayList;

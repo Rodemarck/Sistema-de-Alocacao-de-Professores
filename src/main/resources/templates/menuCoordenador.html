@@ -24,7 +24,7 @@
                         </a>
                     </div>
                     <div class="coluna col3">
-                        <p><!--aqui vai ter o nome da pessoa que ta usando e o que ela é-->Nome - Código</p>
+                        <p th:text="${nome} + ' -- codigo'"><!--aqui vai ter o nome da pessoa que ta usando e o que ela é-->Nome - Código</p>
                     </div>
                 </header>
             </div>
@@ -61,7 +61,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/" onmouseover="logout()" onmouseout="semMouse()">
+                                    <a href="/deslogar" onmouseover="logout()" onmouseout="semMouse()">
                                         <img src="/img/runer-silhouette-running-fast.png" alt="Sair"><br>Logout
                                     </a>
                                 </li>

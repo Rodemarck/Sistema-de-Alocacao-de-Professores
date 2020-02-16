@@ -2,11 +2,8 @@ package com.Hirukar.Project.Connection.DAO;
 
 import com.Hirukar.Project.Connection.ConnectionFactory.DatabaseConnection;
 import com.Hirukar.Project.Models.Users_.Professor;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 public final class ProfessorDAO {
@@ -16,11 +13,12 @@ public final class ProfessorDAO {
         DatabaseConnection.getInstance().connect(
                 """
                 SELECT * FROM professor
-                "WHERE professor.login=?
+                WHERE professor.login=?
                 """,
                 new Object[]{nome},
                 rs->list.add(new Professor(rs))
         );
+        System.out.println('*');
         return list.getFirst();
     }
     
@@ -74,8 +72,8 @@ public final class ProfessorDAO {
                         profNovo.getNome(),
                         profNovo.getCPF(),
                         profNovo.getArea().name(),
-                        profNovo.getPreferencia1().getID(),
-                        profNovo.getPreferencia2().getID(),
+                        profNovo.getPreferencia1().getId(),
+                        profNovo.getPreferencia2().getId(),
                         login,
                         profNovo.getSenha()
                 },

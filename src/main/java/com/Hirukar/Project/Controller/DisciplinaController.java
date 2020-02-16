@@ -5,7 +5,6 @@
  */
 package com.Hirukar.Project.Controller;
 
-import com.Hirukar.Project.Connection.DAO.AlocacaoDAO;
 import com.Hirukar.Project.Connection.DAO.DisciplinasDAO;
 import com.Hirukar.Project.Connection.DAO.ProfessorDAO;
 import com.Hirukar.Project.Models.Beans.Disciplina;

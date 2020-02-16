@@ -114,7 +114,18 @@ public class Professor implements Serializable{
     public void setSenha(String senha) {
         this.senha = senha;
     }
-    
-    
-    
+
+    @Override
+    public String toString() {
+        return "Professor{" +
+                "CPF='" + CPF + '\'' +
+                ", nome='" + nome + '\'' +
+                ", area=" + area +
+                ", login='" + login + '\'' +
+                ", senha='" + senha + '\'' +
+                ", cargo=" + cargo +
+                ", preferencia1=" + preferencia1 +
+                ", preferencia2=" + preferencia2 +
+                '}';
+    }
 }

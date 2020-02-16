@@ -14,7 +14,6 @@ import com.Hirukar.Project.Models.Enums.TipoDisciplina;
 import com.Hirukar.Project.Models.Enums.TipoUsuario;
 import com.Hirukar.Project.Models.Users_.Professor;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -46,6 +45,7 @@ public class VariavelController {
         System.out.println("chamei");
         Professor p = new Professor(cpf, nome, Area.valueOf(area.toUpperCase()), login,
                 new BCryptPasswordEncoder().encode(senha), TipoUsuario.valueOf(tipo.toUpperCase()));
+
         try {
             ProfessorDAO.cadastrar(p);
             return new ResponseEntity<>("Registrado com sucesso", HttpStatus.OK);
