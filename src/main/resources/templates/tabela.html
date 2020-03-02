@@ -1,38 +1,46 @@
-<!DOCTYPE html>
-<html   lang="pt-br">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Tabela Dinamica</title>
-        <link rel="stylesheet" type="text/css" href="/css/tabela-style.css" />
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
-        </script>
-        <script type="text/javascript" src="/js/professor.js" >
-        </script>
-        <script type="text/javascript" src="/js/tabela-script.js">
-        </script>
-    </head>
+<div class="view-disciplina" id="div-disciplinas">
 
-    <body>
-        <button type="button" id="btn"> aaaa</button>
-        <div id="teste"></div>
-        
-      
-       <!--<div th:each="slots : ${h.slot.slots}">
-            <th:block th:if="${slots.usado}" th:each="i : ${slots.dias}">
-                <span th:text="${h.get(i).nome}"></span>
+    <!-- navegação -->
+    <div id="navegacao-disciplina">
+        <span id="curso" class="dadosTabela" th:text="'Curso:'"></span>
+        <select id="todos-cursos" onchange="mudaCurso(this.value)">
+            <option th:each="c : ${cursos}" th:value="${c.id}" th:text="${c.sigla}" th:selected="${c.id == periodo.curso.id}"></option>
+        </select>
+        <span id="periodo" class="dadosTabela" th:text="'Período:'" ></span>
+        <select id="todos-periodos" onchange="mudaPeriodo(this.value)">
+            <option th:each="i,I : ${subPeriodos}" th:value="${i.id}" th:text="${i.nPeriodo}" th:selected="${i.id == periodo.id}"></option>
+        </select>
+    </div>
+    <!-- horario -->
+    <div class="container-disciplinas" id="tabela-dinamica">
+        <div class="container">
+            <th:block th:each="y,Y : ${horarios}">
+                <div class="row">
+                    <div class="mt-4 mb-3 ml-4 mr-4 pt-2 pl-2 horario">
+                        <span class="span-center" th:text="(7 + ${y}) + ':00 - ' + (8 + ${y} + ':00')"></span>
+                    </div>
+                    <div th:each="x,X : ${diasDaSemana}" th:id="'divx'+${X.index}+'y'+${Y.index}" class="mb-3 espaco-disciplina" ondrop="drop(this)" ondragover="allowDrop()" ondblclick="dblclickDisicplina(this)">
+                        <div class="disciplina" th:id="'x'+${X.index}+'y'+${Y.index}" draggable="true" ondragstart="drag(this)">
+                            <span class="text" th:id="'spnx' + ${X.index} + 'y' + ${Y.index}"></span>
+                        </div>
+                    </div>
+                </div>
             </th:block>
         </div>
-        <!--<div th:each="quadro : ${quadros}" id="a"class="linha-disciplina" >
-            <div  th:each="disciplina : ${quadro.disciplinas}" id="div1" class="espaco-disciplina" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <div class="disciplina" th:style="'background-color:'+${disciplina.cor}+';'" th:id="${disciplina.codigo}" draggable="true" ondragstart="drag(event)">
-                    codigo:<span th:text="${disciplina.codigo}"></span><br>
-                    turma:<span th:text="${disciplina.turma}"></span>
-                </div>
-            </div>      
-        </div>-->
-    </body>
-
+    </div>
+    <script th:inline="javascript" id="codigo">
+        /*<![CDATA[*/
+        periodo = /*[[${periodo}]]*/ {};
+        profs = {
+            arq: /*[[${prof_ARC}]]*/ [],
+            fc: /*[[${prof_FC}]]*/ [],
+            ensiso: /*[[${prof_ENSISO}]]*/ [],
+            todos: /*[[${prof}]]*/[]
+        };
+        /*]]>*/
+    </script>
+</div>
 </html>

@@ -1,6 +1,9 @@
 package com.Hirukar.Project.Models.Beans;
 
 import com.Hirukar.Project.Connection.DAO.DisciplinasDAO;
+import com.Hirukar.Project.Models.Users_.Professor;
+import com.Hirukar.Project.Models.constantes.Constantes;
+import com.google.gson.reflect.TypeToken;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,24 +12,18 @@ import java.sql.SQLException;
  *
  * @author RODEMARCK
  */
+import java.util.LinkedList;
 import java.util.List;
 public class Slots {
     private final int id;
     private String nome;
+    private int turno;
     private List<SubSlot> subSlots;
-    private List<Espaco> espacos;
 
     public Slots(ResultSet rs) throws SQLException, ClassNotFoundException {
         this.id = rs.getInt("id");
         this.nome = rs.getString("nome");
         this.subSlots = DisciplinasDAO.listarSubSlot(id);
-        this.espacos = DisciplinasDAO.listarEspaco(id);
-    }
-    /**
-     * @return the espacos
-     */
-    public List<Espaco> getEspacos() {
-        return espacos;
     }
 
     /**
@@ -50,107 +47,36 @@ public class Slots {
         return id;
     }
 
-    public Disciplina getDisciplina(int numero) {
-        for(Espaco e : espacos)
-            if(e.getNumero() == numero)
-                return e.getDisciplina();
-        return null;        
-    }
-    
-
-    
-/*
-    private int ID;
-    private ArrayList<HorarioDisciplinas> horariosDisciplinas;
-    private final HorariosDia[] horarios = new HorariosDia[5];
-    private final boolean[] naoNulos = new boolean[15];
-    private final String[] tempo = new String[15];
-
-    public Slots(ResultSet rs) throws SQLException, ClassNotFoundException {
-
-        horariosDisciplinas = new ArrayList<HorarioDisciplinas>();
-        this.ID = rs.getInt("slots.ID");
-        ArrayList<HorarioDisciplinas> h = new ArrayList<>();
-        while (rs.next()) {
-            horariosDisciplinas.add(new HorarioDisciplinas(rs));
-        }
-        horariosDisciplinas.forEach((t) -> {
-            horarios[t.getDia1().getValue()].setEspacoDisciplina(t.getHorario1(), t.getDisciplina());
-            horarios[t.getDia2().getValue()].setEspacoDisciplina(t.getHorario2(), t.getDisciplina());
-        });
+    /**
+     * @return the turno
+     */
+    public int getTurno() {
+        return turno;
     }
 
-   
-    public void troca(Disciplina d1, Disciplina d2){
-        for(HorarioDisciplinas h : this.horariosDisciplinas){
-            if(h.getDisciplina().equals(d1))
-                h.setDisciplina(d2);
-            else if(h.getDisciplina().equals(d2))
-                h.setDisciplina(d1);
-        }
-    }
-    
-    public int getID() {
-        return ID;
+    /**
+     * @param turno the turno to set
+     */
+    public void setTurno(int turno) {
+        this.turno = turno;
     }
 
-    public ArrayList<HorarioDisciplinas> getHorariosDisciplinas() {
-        return horariosDisciplinas;
+    @Override
+    public String toString() {
+        return "Slots{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", turno=" + turno +
+                ", subSlots=" + subSlots +
+                '}';
     }
 
-    public HorariosDia[] getHorarios() {
-        return horarios;
+    public static Slots get(String raw){
+        return Constantes.gson.fromJson(Constantes.formatarJson(raw), Slots.class);
     }
 
-    public void setID(int ID) {
-        this.ID = ID;
+    public static LinkedList<Slots> getList(String raw){
+        return Constantes.gson.fromJson(Constantes.formatarJson(raw), new TypeToken<LinkedList<Slots>>(){}.getType());
+
     }
-
-    public void setHorariosDisciplinas(ArrayList<HorarioDisciplinas> horariosDisciplinas) {
-        this.horariosDisciplinas = horariosDisciplinas;
-    }
-
-    public void troca(int n1, int n2) {
-        HorarioDisciplinas h1 = horariosDisciplinas.get(n1);
-        HorarioDisciplinas h2 = horariosDisciplinas.get(n2);
-
-        Disciplina d2 = h2.getDisciplina();
-        Disciplina d1 = h1.getDisciplina();
-
-        horarios[h1.getDia1().getValue()].setEspacoDisciplina(h1.getHorario1(), d2);
-        horarios[h1.getDia2().getValue()].setEspacoDisciplina(h1.getHorario2(), d2);
-        horarios[h2.getDia1().getValue()].setEspacoDisciplina(h2.getHorario1(), d1);
-        horarios[h2.getDia2().getValue()].setEspacoDisciplina(h2.getHorario2(), d1);
-
-        h1.setDisciplina(d2);
-        h2.setDisciplina(d1);
-    }
-
-    private void verificaNulos() {
-        boolean check;
-        for (int y = 0; y < 15; y++) {
-            check = false;
-            for (int x = 0; x < 5; x++) {
-                if (horarios[x].getEspacos()[y] != null) {
-                    check = true;
-                }
-            }
-            naoNulos[y] = check;
-        }
-    }
-
-    private void defineHorario() {
-        for (int x = 0; x < 15; x++) {
-            tempo[x] = (x + 7) + ":00 - " + (x + 8) + ":00";
-        }
-    }
-
-    public boolean[] getNaoNulos() {
-        return naoNulos;
-    }
-
-    public String[] getTempo() {
-        return tempo;
-    }
-*/
 }

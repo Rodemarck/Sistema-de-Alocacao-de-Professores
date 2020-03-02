@@ -48,7 +48,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
                     .permitAll()
                 .antMatchers(
                         "/",
-                        "/sobre"
+                        "/sobre",
+                        "/disciplinas"
                 )
                     .permitAll()
                         .antMatchers(
@@ -62,8 +63,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
                 )
                     .hasAuthority(TipoUsuario.COORDENADOR.name())
                 .antMatchers(
-                        "/menuSupervisor",
-                        "/disciplinas"
+                        "/menuSupervisor"//,"/disciplinas"
                 )
                     .hasAnyAuthority(TipoUsuario.SUPERVISOR.name())
                 .antMatchers(

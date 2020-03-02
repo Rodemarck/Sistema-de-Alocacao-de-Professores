@@ -17,10 +17,9 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.Hirukar.Project.Models.constantes.Constantes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,30 +37,23 @@ public class VariavelController {
         return ProfessorDAO.listar();
     }
 
-    @RequestMapping(value = "/variavel/professores", method = RequestMethod.POST, produces = {
-            MimeTypeUtils.TEXT_PLAIN_VALUE })
-    public ResponseEntity<String> putProfessores(String cpf, String nome, String area, String login, String senha,
-            String tipo) throws ClassNotFoundException, SQLException {
-        System.out.println("chamei");
-        Professor p = new Professor(cpf, nome, Area.valueOf(area.toUpperCase()), login,
-                new BCryptPasswordEncoder().encode(senha), TipoUsuario.valueOf(tipo.toUpperCase()));
-
-        try {
-            ProfessorDAO.cadastrar(p);
+    @RequestMapping(value = "/variavel/professores", method = RequestMethod.POST)
+    public ResponseEntity<String> putProfessores(String cpf, String nome, Area area, String login, String senha,TipoUsuario tipo) throws ClassNotFoundException, SQLException {
+       try {
+            ProfessorDAO.cadastrar(cpf, nome, area.name(), login, Constantes.bCrypt.encode(senha), tipo.name());
             return new ResponseEntity<>("Registrado com sucesso", HttpStatus.OK);
         } catch (ClassNotFoundException | SQLException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+           System.out.println(e.getMessage());
+           return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
     }
 
-    @RequestMapping(value = "/variavel/professores", method = RequestMethod.PATCH, produces = {
-            MimeTypeUtils.TEXT_PLAIN_VALUE })
+    @RequestMapping(value = "/variavel/professores", method = RequestMethod.PATCH)
     public void patchProfessores(String login, Professor professor) throws ClassNotFoundException, SQLException {
         // ProfessorDAO.atualiza(login, professor);
     }
 
-    @RequestMapping(value = "/variavel/professores", method = RequestMethod.DELETE, produces = {
-            MimeTypeUtils.TEXT_PLAIN_VALUE })
+    @RequestMapping(value = "/variavel/professores", method = RequestMethod.DELETE)
     public void deleteProfessores(Professor professor) {
         //
     }
@@ -83,7 +75,6 @@ public class VariavelController {
             return new ResponseEntity<>(e.getMessage(),HttpStatus.CONFLICT);
         }
     }
-    
     
     @RequestMapping(value="/variavel/disciplinas", method = RequestMethod.PATCH)
     public void patchDisciplina(String nome,Disciplina disciplina) throws ClassNotFoundException, SQLException{
@@ -143,6 +134,7 @@ public class VariavelController {
     }
     @RequestMapping(value="/variavel/conta", method = RequestMethod.GET)
     public Professor getConta(@AuthenticationPrincipal UserDetails userDetails) throws Exception{
-        return ProfessorDAO.getPeloNome(userDetails.getUsername());
+        //return ProfessorDAO.getPeloNome(userDetails.getUsername());
+        return null;
     }
 }

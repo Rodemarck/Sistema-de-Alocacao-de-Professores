@@ -7,8 +7,13 @@ package com.Hirukar.Project.Models.Beans;
 
 import com.Hirukar.Project.Models.Enums.Area;
 import com.Hirukar.Project.Models.Enums.TipoDisciplina;
+import com.Hirukar.Project.Models.Users_.Professor;
+import com.Hirukar.Project.Models.constantes.Constantes;
+import com.google.gson.reflect.TypeToken;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,7 +27,7 @@ public class Disciplina {
     private String codigo;
     private TipoDisciplina tipo;
     private Area area;
-    List<Disciplina> prerequisito;
+    private List<Disciplina> prerequisito;
     
     public boolean remover(int n){
         return this.area == Area.getArea(n);
@@ -139,5 +144,14 @@ public class Disciplina {
                 ", area=" + area +
                 ", preRequisito=" + prerequisito +
                 '}';
+    }
+
+    public static Disciplina get(String raw){
+        return Constantes.gson.fromJson(Constantes.formatarJson(raw), Disciplina.class);
+    }
+
+    public static LinkedList<Disciplina> getList(String raw){
+        return Constantes.gson.fromJson(Constantes.formatarJson(raw), new TypeToken<LinkedList<Disciplina>>(){}.getType());
+
     }
 }

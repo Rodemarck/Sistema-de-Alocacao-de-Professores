@@ -1,5 +1,6 @@
     ﻿<!DOCTYPE html>
-    <html lang="pt-br" xmlns:th="http://www.w3.org/1999/xhtml">
+    <html xmlns="http://www.w3.org/1999/xhtml"
+          xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,6 +37,16 @@
                     <option th:each="i : ${periodos}" th:value="${i}" th:text="${i}" th:selected="${i==h.nPeriodo}" th:onclick="'mudaPeriodo(\''+${i}+'\');'"></option>
                 </select>
 
+            </div><div id="navegacao-disciplina">
+                <span id="curso" class="dadosTabela" th:text="'Curso:'"></span>
+                <select id="todos-cursos">
+                    <option th:each="c : ${cursos}" th:value="${c.id}" th:text="${c.nome}" th:onclick="'mudaCurso(' + c.id + ');'"></option>
+                </select>
+                <span id="periodo" class="dadosTabela" th:text="'Período:'" ></span>
+                <select id="todos-periodos">
+                    <option th:each="i : ${periodos}" th:value="${i}" th:text="${i}" th:selected="${i==h.nPeriodo}" th:onclick="'mudaPeriodo(\''+${i}+'\');'"></option>
+                </select>
+
             </div>
             <div class="container-horarios">
                 <div th:each="slots,slotsIndex : ${h.slot.slots}" th:if="${slots.usado}" class="horario">
@@ -44,10 +55,8 @@
             </div>
             <div class="container-disciplinas">
                 <div th:each="slots,slotsIndex : ${h.slot.slots}" th:if="${slots.usado}" th:id="'y'+${slotsIndex.index}" class="linha-disciplina" >
-                    <div  th:each="i,iIndex : ${slots.dias}" th:id="'divx'+${iIndex.index}+'y'+${slotsIndex.index}" class="espaco-disciplina" ondrop="drop(event)" ondragover="allowDrop(event)">
-                        <div class="disciplina" th:style="'background-color:'+${h.getHorarioDisciplina(i).cor}+';'" ondblclick="dblclickDisicplina(event)" th:id="'x'+${iIndex.index}+'y'+${slotsIndex.index}"  draggable="true" ondragstart="drag(event)" 
-                        th:attr="data-numero=${i},data-cor=${h.getHorarioDisciplina(i).cor},data-codigo=${h.getHorarioDisciplina(i).disciplina.codigo},data-tipo=${h.getHorarioDisciplina(i).disciplina.tipo},
-                        data-area=${h.getHorarioDisciplina(i).disciplina.area},data-curso=${h.curso},data-periodo=${h.nPeriodo},data-nome=${h.getHorarioDisciplina(i).disciplina.nome},data-id=${h.getHorarioDisciplina(i).disciplina.ID}">
+                    <div  th:each="i,iIndex : ${slots.dias}" th:id="'divx'+${iIndex.index}+'y'+${slotsIndex.index}" >
+                        <div class="disciplina" th:style="'background-color:'+${h.getHorarioDisciplina(i).cor}+';'">
                             <span class="text" th:id="'spn'+${iIndex.index}+'y'+${slotsIndex.index}" th:text="${h.getHorarioDisciplina(i).disciplina.nome}" ondblclick="dblclickDisicplinaText(event)"></span><br>
                         </div>
                     </div>
@@ -69,6 +78,7 @@
                         <div class="col-md-12">
                             <div class="container-fluid" id="horarios">
                                 <div class="row" th:each="periodo : ${periodos}">
+                                    <!--/*@thymesVar id="diasSemana" type=""*/-->
                                     <div th:each="dia : ${diasSemana}" th:id="'div-x' + diasStat.index + 'y' + periodoStat.index" class="col-md-2 ml-3 mt-2 mb-2 p-0 espaco-disciplina" ondrop="drop(event)" ondragover="allowDrop(event)">
                                         <div class="disciplina" ondblclick="dblclickDisicplina(event)" th:id="'el-x' + diasStat.index + 'y' + periodoStat.index" draggable="true" ondragstart="drag(event)">
                                             <div class="ml-2" th:id="'space-x' + diasStat.index + 'y' + periodoStat.index">
@@ -182,14 +192,6 @@
 
 
 
-
-
-        <!--Escolha de cursos-->
-        <div id="navegaca-disciplina">
-            <div class="btn-navegacao" onclick="irParaDisciplinas()" style="background-color: red;">
-                <label>olhar cursos</label>
-            </div>
-        </div>
 
 
 

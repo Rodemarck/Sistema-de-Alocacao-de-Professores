@@ -7,15 +7,17 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 public final class DatabaseConnection {
     private final String HOST;
     private final int PORT;
-    private final String DATABASE ;
-    private final String DRIVER = "com.mysql.cj.jdbc.Driver";
+    private final String DATABASE;
+    private final String DRIVER;
     private final String URL;
     private final String USER;
     private final String PASS;
+    private final String CONECTOR;
 
     private static DatabaseConnection instance;
      
@@ -32,7 +34,9 @@ public final class DatabaseConnection {
         this.DATABASE = env.get("DB_DATABASE");
         this.USER = env.get("DB_USER");
         this.PASS = env.get("DB_PASS");
-        this.URL = "jdbc:mysql://" + this.HOST + ":" + this.PORT + "/" + this.DATABASE + "?useTimezone=true&serverTimezone=UTC";
+        this.DRIVER = env.get("DB_DRIVER");
+        this.CONECTOR = env.get("DB_CONECTOR");
+        this.URL = this.CONECTOR + this.HOST + ":" + this.PORT + "/" + this.DATABASE + "?useTimezone=true&serverTimezone=UTC";
     }
 
     private Connection getConnection() throws ClassNotFoundException, SQLException {
@@ -68,7 +72,6 @@ public final class DatabaseConnection {
             if(params != null)
                 for(int i=0; i< params.length; i++)
                     bind(i+1,stmt,params[i]);
-
             rs = stmt.executeQuery();
             if(callback != null){
                 if(rs.next())
@@ -84,13 +87,32 @@ public final class DatabaseConnection {
         }
     }
 
+    public void connect(String sql, Object[] params) throws ClassNotFoundException, SQLException {
+        long time = System.currentTimeMillis();
+        Connection con = null;
+        PreparedStatement stmt = null;
+        try{
+            con = getConnection();
+            stmt = con.prepareStatement(sql);
+            if(params != null)
+                for(int i=0; i< params.length; i++)
+                    bind(i + 1, stmt, params[i]);
+            stmt.executeUpdate();
+        }catch(ClassNotFoundException | SQLException e){
+            throw e;
+        }finally{
+            close(con,stmt);
+            System.out.println("tempo de conexão =" + (System.currentTimeMillis()-time) + "ms");
+        }
+    }
+
     private void bind(int i, PreparedStatement stmt, Object obj) throws SQLException {
         Class<?> var = obj.getClass();
-        if (int.class.equals(var))
+        if (Integer.class.equals(var))
             stmt.setInt(i, (int) obj);
-        else if (double.class.equals(var))
+        else if (Double.class.equals(var))
             stmt.setDouble(i, (double) obj);
-        else if (String.class.equals(var))
+        else
             stmt.setString(i, obj.toString());
     }
 }

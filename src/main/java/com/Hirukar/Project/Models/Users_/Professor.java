@@ -4,12 +4,20 @@ import com.Hirukar.Project.Connection.DAO.DisciplinasDAO;
 import com.Hirukar.Project.Models.Beans.Disciplina;
 import com.Hirukar.Project.Models.Enums.Area;
 import com.Hirukar.Project.Models.Enums.TipoUsuario;
+import com.Hirukar.Project.Models.constantes.Constantes;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.gson.internal.LinkedTreeMap;
+import com.google.gson.reflect.TypeToken;
+
 import java.io.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Professor implements Serializable{
     private final static long serialVersionUID = -1;
+    private final int id;
     private String CPF;
     private String nome;
     private Area area;
@@ -18,31 +26,17 @@ public class Professor implements Serializable{
     private TipoUsuario cargo;
     private Disciplina preferencia1;
     private Disciplina preferencia2;
-    
-    public Professor(ResultSet rs) throws SQLException, ClassNotFoundException{
-        String prof = "professor";
-        try{this.CPF = rs.getString("professor.CPF");
-        }catch(SQLException e){
-            prof = "P";
-            this.CPF = rs.getString("P.CPF");
-        }
-        this.nome = rs.getString(prof+".Nome");
-        this.area = Area.valueOf(rs.getString(prof+".Area").toUpperCase());
-        this.login = rs.getString(prof+".Login");
-        this.senha = rs.getString(prof+".senha");
-        this.cargo = TipoUsuario.valueOf(rs.getString(prof+".cargo").toUpperCase());
-        this.preferencia1 = rs.getInt(prof+".FK_Disciplina_Preferencia_1") == 0 ? 
-                null : DisciplinasDAO.getDisciplina(rs.getInt(prof+".FK_Disciplina_Preferencia_1"));
-        this.preferencia2 = rs.getInt(prof+".FK_Disciplina_Preferencia_2") == 0 ? 
-                null : DisciplinasDAO.getDisciplina(rs.getInt(prof+".FK_Disciplina_Preferencia_2"));
-    }
+
+
     public Professor(){
-        this.login = " ";
-        this.senha = " ";
-        this.CPF = " ";
+        this.id = 0;
+        this.login = "";
+        this.senha = "";
+        this.CPF = "";
         this.cargo = TipoUsuario.PROFESSOR;
     }
-    public Professor(String CPF, String nome, Area area, String login, String senha, TipoUsuario cargo) {
+    public Professor(int id,String CPF, String nome, Area area, String login, String senha, TipoUsuario cargo) {
+        this.id = id;
         this.CPF = CPF;
         this.nome = nome;
         this.area = area;
@@ -50,7 +44,11 @@ public class Professor implements Serializable{
         this.senha = senha;
         this.cargo = cargo;
     }
-    
+
+    public int getId() {
+        return id;
+    }
+
     public String getCPF() {
         return CPF;
     }
@@ -99,18 +97,22 @@ public class Professor implements Serializable{
         this.preferencia2 = preferencia2;
     }
 
+    @JsonIgnore
     public String getLogin() {
         return login;
     }
 
+    @JsonIgnore
     public void setLogin(String login) {
         this.login = login;
     }
 
+    @JsonIgnore
     public String getSenha() {
         return senha;
     }
 
+    @JsonIgnore
     public void setSenha(String senha) {
         this.senha = senha;
     }
@@ -128,4 +130,13 @@ public class Professor implements Serializable{
                 ", preferencia2=" + preferencia2 +
                 '}';
     }
+
+    public static Professor get(String raw){
+        return Constantes.gson.fromJson(Constantes.formatarJson(raw) , Professor.class);
+    }
+
+    public static LinkedList<Professor> getList(String raw){
+        return Constantes.gson.fromJson(Constantes.formatarJson(raw), new TypeToken<LinkedList<Professor>>(){}.getType());
+    }
+
 }

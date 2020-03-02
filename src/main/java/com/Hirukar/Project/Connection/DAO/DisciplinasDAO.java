@@ -6,22 +6,21 @@
 package com.Hirukar.Project.Connection.DAO;
 
 import com.Hirukar.Project.Connection.ConnectionFactory.DatabaseConnection;
-import com.Hirukar.Project.Models.Beans.Disciplina;
-import com.Hirukar.Project.Models.Beans.Espaco;
-import com.Hirukar.Project.Models.Beans.Ministra;
-import com.Hirukar.Project.Models.Beans.Periodo;
-import com.Hirukar.Project.Models.Beans.Slotss;
-import com.Hirukar.Project.Models.Beans.SubSlot;
+import com.Hirukar.Project.Models.Beans.*;
+import com.Hirukar.Project.Models.constantes.Constantes;
+import com.google.gson.Gson;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
  * @author RODEMARCK
  */
 public abstract class DisciplinasDAO {
+    private static Gson gson = new Gson();
 
     public static Periodo getPeriodo(int idCurso, int nPeriodo) throws ClassNotFoundException, SQLException {
         LinkedList<Periodo> lista = new LinkedList<>();
@@ -41,6 +40,16 @@ public abstract class DisciplinasDAO {
                 rs -> lista.add(new Periodo(rs))
         );
         return lista.getFirst();
+    }
+
+    public static Periodo getPeriodo(int idPeriodo) throws SQLException, ClassNotFoundException {
+        LinkedList<Periodo> list = new LinkedList<>();
+        DatabaseConnection.getInstance().connect(
+                "SELECT get_periodo(?)",
+                new Object[]{idPeriodo},
+                rs -> list.add(Periodo.get(rs.getString(1)))
+        );
+        return list.getFirst();
     }
 
     public static Disciplina getDisciplina(int idDisciplina) throws ClassNotFoundException, SQLException {
@@ -126,6 +135,19 @@ public abstract class DisciplinasDAO {
                 null
         );
     }
+
+    public static LinkedList<Periodo.SubPeriodo> subPeriodos(int idCurso, int anoLetivo) throws SQLException, ClassNotFoundException {
+        LinkedList<Periodo.SubPeriodo> list = new LinkedList<>();
+        DatabaseConnection.getInstance().connect(
+                "SELECT sublist_periodo(?,?)",
+                new Object[]{
+                        idCurso,
+                        anoLetivo
+                },
+                rs-> list.addAll(Periodo.SubPeriodo.getList(rs.getString(1)))
+        );
+        return list;
+    }
     public static int getIdEspaco (int idPeriodo, int numero) throws ClassNotFoundException, SQLException{
         LinkedList<Integer> lista = new LinkedList<>();
         DatabaseConnection.getInstance().connect(
@@ -142,19 +164,19 @@ public abstract class DisciplinasDAO {
         return lista.getFirst();
     }
 
-    public static Slotss getSlots(int id) throws ClassNotFoundException, SQLException {
-        LinkedList<Slotss> lista = new LinkedList<>();
+    public static int getIdPeriodo(int idCurso, int ano, int nPeriodo) throws SQLException, ClassNotFoundException {
+        LinkedList<Integer> list = new LinkedList<>();
         DatabaseConnection.getInstance().connect(
-                """
-                SELECT * FROM slots
-                WHERE slots.ID=?
-                """,
-                new Object[]{id}, 
-                rs->lista.add(new Slotss(rs))
+                "SELECT id FROM periodo WHERE curso_id=? AND ano_letivo=? AND n_periodo=?",
+                new Object[]{
+                        idCurso,
+                        ano,
+                        nPeriodo
+                },
+                rs->list.add(rs.getInt("id"))
         );
-        return lista.getFirst();
+        return list.getFirst();
     }
-
 
     public static  int getIdHorarioDisciplina(int idCurso, int nPeriodo, int numero)  throws ClassNotFoundException, SQLException{
         LinkedList<Integer> lista = new LinkedList<>();
@@ -177,8 +199,15 @@ public abstract class DisciplinasDAO {
         return lista.getFirst();
     }
 
-	public static ArrayList<Integer> listarPeriodos() {
-		return null;
+	public static LinkedList<Periodo> listarPeriodos(int idCurso) throws SQLException, ClassNotFoundException {
+		LinkedList<Periodo> list = new LinkedList<>();
+		DatabaseConnection.getInstance().connect(
+		        "SELECT list_periodos(?)",
+                new Object[]{idCurso},
+                rs -> list.addAll(Periodo.getList(rs.getString(1)))
+
+        );
+        return list;
 	}
 
     public static LinkedList<Ministra> listarAlocacoes()  throws ClassNotFoundException, SQLException{
@@ -190,4 +219,16 @@ public abstract class DisciplinasDAO {
 
     public static void atualiza(String nome, Disciplina disciplina) {
     }
+
+    public static LinkedList<Curso> listarCurso() throws SQLException, ClassNotFoundException {
+        LinkedList<Curso> list = new LinkedList<>();
+        DatabaseConnection.getInstance().connect(
+                "SELECT list_cursos()",
+                null,
+                rs -> list.addAll(Curso.getList(rs.getString(1)))
+        );
+        return list;
+    }
+
+
 }

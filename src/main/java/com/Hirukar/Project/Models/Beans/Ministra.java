@@ -8,8 +8,12 @@ package com.Hirukar.Project.Models.Beans;
 import com.Hirukar.Project.Connection.DAO.DisciplinasDAO;
 import com.Hirukar.Project.Connection.DAO.ProfessorDAO;
 import com.Hirukar.Project.Models.Users_.Professor;
+import com.Hirukar.Project.Models.constantes.Constantes;
+import com.google.gson.reflect.TypeToken;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedList;
 
 /**
  *
@@ -19,16 +23,14 @@ public class Ministra {
     private int ID;
     private Professor professor;
     private Disciplina discplina;
-    private int FK_ID_periodo;
+    private int periodoId;
 
-    public Ministra(ResultSet rs) throws SQLException, ClassNotFoundException {
-        this.ID = rs.getInt("ministra.ID");
-        this.professor = ProfessorDAO.getPeloID(rs.getInt("ministra.FK_CPF_professor"));
-        this.discplina = DisciplinasDAO.getDisciplina(rs.getInt("ministra.FK_ID_disciplina"));
-        this.FK_ID_periodo = rs.getInt("ministra.FK_ID_periodo");
+    public Ministra(int ID, Professor professor, Disciplina discplina, int periodoId) {
+        this.ID = ID;
+        this.professor = professor;
+        this.discplina = discplina;
+        this.periodoId = periodoId;
     }
-    
-    
 
     public int getID() {
         return ID;
@@ -54,13 +56,29 @@ public class Ministra {
         this.discplina = discplina;
     }
 
-    public int getFK_ID_periodo() {
-        return FK_ID_periodo;
+    public int getPeriodoId() {
+        return periodoId;
     }
 
-    public void setFK_ID_periodo(int FK_ID_periodo) {
-        this.FK_ID_periodo = FK_ID_periodo;
+    public void setPeriodoId(int periodoId) {
+        this.periodoId = periodoId;
     }
-    
-    
+
+    @Override
+    public String toString() {
+        return "Ministra{" +
+                "ID=" + ID +
+                ", professor=" + professor +
+                ", discplina=" + discplina +
+                ", periodoId=" + periodoId +
+                '}';
+    }
+
+    public static Ministra get(String raw){
+        return Constantes.gson.fromJson(Constantes.formatarJson(raw), Ministra.class);
+    }
+
+    public static LinkedList<Ministra> getList(String raw){
+        return Constantes.gson.fromJson(Constantes.formatarJson(raw), new TypeToken<LinkedList<Ministra>>(){}.getType());
+    }
 }
